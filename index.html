@@ -8,6 +8,7 @@
   <!-- Load XLSX and Lottie libraries -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.4/lottie.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
   <!-- Google Fonts -->
   <link
@@ -230,7 +231,7 @@
   </header>
 
   <h1 style="text-align: center; color: #007bff; margin-bottom: 40px;">Product Promotion</h1>
-  <div class="container"></div>
+  <div class="container animate__animated animate__flipInX"></div>
 
   <div class="pagination">
     <button id="prevPage" disabled>Previous</button>
@@ -282,63 +283,71 @@
 
     function displayProducts() {
       const container = document.querySelector('.container');
-      container.innerHTML = ''; // Clear previous products
+      container.classList.remove('animate__flipInX');
+      container.classList.add('animate__flipOutX');
 
-      const startIndex = (currentPage - 1) * productsPerPage;
-      const endIndex = Math.min(startIndex + productsPerPage, totalProducts);
+      setTimeout(() => {
+        container.innerHTML = ''; // Clear previous products
 
-      const fragment = document.createDocumentFragment();
-      for (let i = startIndex; i < endIndex; i++) {
-        const product = productsData[i];
-        const remarksText = product['Remark'] || 'No remarks available';
-        const productBox = document.createElement('div');
-        productBox.className = 'product-box';
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const endIndex = Math.min(startIndex + productsPerPage, totalProducts);
 
-        const productImageContainer = document.createElement('div');
-        productImageContainer.className = 'product-image-container';
-        showLottieLoader(productImageContainer);
+        const fragment = document.createDocumentFragment();
+        for (let i = startIndex; i < endIndex; i++) {
+          const product = productsData[i];
+          const remarksText = product['Remark'] || 'No remarks available';
+          const productBox = document.createElement('div');
+          productBox.className = 'product-box';
 
-        const productImage = document.createElement('img');
-        productImage.className = 'product-image';
-        productImage.src = product['URL'] || '';
-        productImage.alt = product['NAME'];
+          const productImageContainer = document.createElement('div');
+          productImageContainer.className = 'product-image-container';
+          showLottieLoader(productImageContainer);
 
-        productImage.onload = () => {
-          productImageContainer.innerHTML = '';
-          productImage.style.display = 'block';
-          productImageContainer.appendChild(productImage);
-        };
+          const productImage = document.createElement('img');
+          productImage.className = 'product-image';
+          productImage.src = product['URL'] || '';
+          productImage.alt = product['NAME'];
 
-        productImage.onerror = () => {
-          productImageContainer.innerHTML = '<div class="no-image">No Image</div>';
-        };
+          productImage.onload = () => {
+            productImageContainer.innerHTML = '';
+            productImage.style.display = 'block';
+            productImageContainer.appendChild(productImage);
+          };
 
-        productBox.innerHTML += `
-          <div class="product-name">${product['NAME']}</div>
-          <div class="product-code">Code: ${product['SCF']}</div>
-          <div class="price-info">
-            RCP: RM${Number(product['RCP']).toLocaleString()} |
-            Member Price: RM${Number(product['BLK']).toLocaleString()}
-          </div>
-          <div class="promo-price">
-            <div class="promo-price-content">
-              <span class="price-main">RM0.00</span>
-              <div class="plus-symbol">+</div>
-              <div class="coin-points">
-                <span>${Number(product['S-COIN']).toLocaleString()}</span>
-                <small>S-Coin pts</small>
+          productImage.onerror = () => {
+            productImageContainer.innerHTML = '<div class="no-image">No Image</div>';
+          };
+
+          productBox.innerHTML += `
+            <div class="product-name">${product['NAME']}</div>
+            <div class="product-code">Code: ${product['SCF']}</div>
+            <div class="price-info">
+              RCP: RM${Number(product['RCP']).toLocaleString()} |
+              Member Price: RM${Number(product['BLK']).toLocaleString()}
+            </div>
+            <div class="promo-price">
+              <div class="promo-price-content">
+                <span class="price-main">RM0.00</span>
+                <div class="plus-symbol">+</div>
+                <div class="coin-points">
+                  <span>${Number(product['S-COIN']).toLocaleString()}</span>
+                  <small>S-Coin pts</small>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="remarks">${remarksText}</div>
-        `;
+            <div class="remarks">${remarksText}</div>
+          `;
 
-        productBox.prepend(productImageContainer);
-        fragment.appendChild(productBox);
-      }
+          productBox.prepend(productImageContainer);
+          fragment.appendChild(productBox);
+        }
 
-      container.appendChild(fragment);
-      updatePaginationButtons();
+        container.appendChild(fragment);
+        container.classList.remove('animate__flipOutX');
+        container.classList.add('animate__flipInX');
+
+        updatePaginationButtons();
+      }, 600);
     }
 
     function updatePaginationButtons() {
